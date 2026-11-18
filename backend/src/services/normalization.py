@@ -84,6 +84,22 @@ def projected_dependencies(attributes,fds):
             for rhs in (closure(subset,fds)&set(attrs))-set(subset):out.append((frozenset(subset),rhs))
     return out
 
+def rule_differences(scope,fds_a,fds_b):
+    # Minimal witness dependencies on `scope` where two dependency snapshots disagree.
+    # Closures run over the full FD sets, so derivations passing through attributes
+    # outside the scope still count; results are intersected with the scope.
+    universe=sorted(set(scope))
+    if len(universe)>MAX_ATTRIBUTES:raise ValueError('换版核对的使用属性最多10项（至多1024子集）')
+    diffs=[]
+    for size in range(len(universe)):
+        for subset in combinations(universe,size):
+            lhs=set(subset)
+            reach_a=closure(lhs,fds_a)&set(universe);reach_b=closure(lhs,fds_b)&set(universe)
+            for rhs in sorted((reach_a^reach_b)-lhs):
+                if any(prev_lhs<=lhs for prev_lhs,prev_rhs,_ in diffs if prev_rhs==rhs):continue
+                diffs.append((frozenset(lhs),rhs,'a' if rhs in reach_a else 'b'))
+    return diffs
+
 def analyze(attributes,dependencies):
     attrs=sorted(set(attributes))
     if not attrs or len(attrs)>MAX_ATTRIBUTES:raise ValueError('关系必须包含1–10个唯一属性；复杂度超限请拆分关系')

@@ -1,2 +1,2 @@
-/** Relation:{id,code,title,attributes,note}; Dependency:{id,relation_id,lhs,rhs,note}; Report:{id,name,relation_id,input_snapshot,status,result,error} */
-export const entityNames=['relations','dependencies','reports'];
+/** Relation:{id,code,title,attributes,note}; Dependency:{id,relation_id,lhs,rhs,note}; Report:{id,name,relation_id,input_snapshot,status,result,error}; EntrySystem:{id,code,name,attributes,current_report_id,note}; SwitchBatch:{id,name,target_report_id,status,created_at,confirmed_at,items:[{id,system_id,system_code,system_name,expected_attributes,expected_report_id,issues:[{type,message}]}]} */
+export const entityNames=['relations','dependencies','reports','systems','batches'];
